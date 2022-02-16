@@ -2,50 +2,56 @@ package com.sunglowsys.service;
 
 import com.sunglowsys.domain.HotelBooking;
 import com.sunglowsys.repository.HotelBookingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Transactional
 public class HotelBookingServiceImpl implements HotelBookingService{
 
-    @Autowired
-    private HotelBookingRepository hotelBookingRepository;
+    private final Logger log = LoggerFactory.getLogger(HotelBookingServiceImpl.class);
+
+    private final HotelBookingRepository hotelBookingRepository;
+
+    public HotelBookingServiceImpl(HotelBookingRepository hotelBookingRepository) {
+        this.hotelBookingRepository = hotelBookingRepository;
+    }
 
     @Override
     public HotelBooking create(HotelBooking hotelBooking) {
+        log.debug("Request to save HotelBooking : {} ",hotelBooking);
         return hotelBookingRepository.save(hotelBooking);
     }
 
     @Override
-    public HotelBooking update(HotelBooking hotelBooking, Long id) {
-        HotelBooking hotelBooking1 = findById(id);
-        hotelBooking1.setCheck_in_date(hotelBooking.getCheck_in_date());
-        hotelBooking1.setCheck_out_date(hotelBooking.getCheck_out_date());
-        hotelBooking1.setTotal_guest(hotelBooking.getTotal_guest());
-        hotelBooking1.setNo_of_nights(hotelBooking.getNo_of_nights());
-        hotelBooking1.setNo_of_rooms(hotelBooking.getNo_of_rooms());
-        hotelBooking1.setBooking_amount(hotelBooking.getBooking_amount());
-        hotelBooking1.setCustomer_id(hotelBooking.getCustomer_id());
-        hotelBooking1.setHotel_id(hotelBooking.getHotel_id());
-        hotelBooking1.setRoom_type_id(hotelBooking.getRoom_type_id());
-        hotelBooking1.setRate_plan_id(hotelBooking.getRate_plan_id());
-        return hotelBookingRepository.save(hotelBooking1);
+    public HotelBooking update(HotelBooking hotelBooking) {
+        log.debug("Request to update HotelBooking : {} ",hotelBooking);
+        return hotelBookingRepository.save(hotelBooking);
+
     }
 
     @Override
-    public HotelBooking findById(Long id) {
-        return hotelBookingRepository.findById(id).get();
+    public Optional<HotelBooking> findById(Long id) {
+        log.debug("Request to find HotelBooking : {} ",id);
+        return hotelBookingRepository.findById(id);
     }
 
     @Override
-    public List<HotelBooking> findAll() {
-        return hotelBookingRepository.findAll();
+    public Page<HotelBooking> findAll(Pageable pageable){
+        log.debug("Request to find HotelBooking : {} ",pageable.toString());
+        return hotelBookingRepository.findAll(pageable);
     }
 
     @Override
     public void delete(Long id) {
+        log.debug("Request to delete HotelBooking : {} ",id);
         hotelBookingRepository.deleteById(id);
     }
 }
